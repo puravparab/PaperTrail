@@ -1,0 +1,12 @@
+{
+	"manifest_version": 3,
+	"name": "PaperTrail",
+	"description": "Save arXiv papers",
+	"version": "1.0.0",
+	"action": {},
+	"background": {
+		"service_worker": "src/background/index.js",
+		"type": "module"
+	},
+	"permissions": ["scripting", "activeTab", "storage"]
+}

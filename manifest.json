@@ -8,5 +8,12 @@
 		"service_worker": "src/background/index.js",
 		"type": "module"
 	},
+	"content_scripts": [
+    {
+    	"matches": ["https://arxiv.org/*"],
+      "js": ["src/content/index.js"],
+			"type": "module"
+    }
+  ],
 	"permissions": ["scripting", "activeTab", "storage"]
 }

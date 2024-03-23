@@ -99,4 +99,29 @@ const scanPage = () => {
   });
 };
 
+//paperTrailLink();
 scanPage();
+
+const paperTrailLink = () => {
+  const hoveringDiv = document.createElement('div');
+  hoveringDiv.textContent = 'PaperTrail';
+  hoveringDiv.style.position = 'fixed';
+  hoveringDiv.style.top = '0px';
+  hoveringDiv.style.right = '60px';
+  hoveringDiv.style.backgroundColor = '#f2f0e8';
+  hoveringDiv.style.color = '#b31a1b';
+	hoveringDiv.style.fontSize = '16px'; 
+	hoveringDiv.style.fontWeight = '700'; 
+  hoveringDiv.style.padding = '10px';
+  hoveringDiv.style.borderRadius = '1px';
+  hoveringDiv.style.zIndex = '9999';
+  hoveringDiv.style.cursor = 'pointer';
+
+  const listLink = document.createElement('a');
+  listLink.href = '/'; // Adjust the URL to match the list page URL
+  listLink.appendChild(hoveringDiv);
+
+  document.body.appendChild(listLink);
+};
+
+paperTrailLink();

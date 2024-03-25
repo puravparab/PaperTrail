@@ -34,32 +34,6 @@ const fetchMetadata = async (paperId: string): Promise<PaperRes | null> => {
 	return null;
 };
 
-// PaperTrail Database
-let db: IDBDatabase;
-const openDatabase = (): Promise<IDBDatabase> => {
-  return new Promise<IDBDatabase>((resolve, reject) => {
-    const request: IDBOpenDBRequest = indexedDB.open('PaperTrailDB', 1);
-    request.onerror = () => {
-      console.error('Error opening database:', request.error);
-      reject(request.error);
-    };
-    request.onsuccess = () => {
-      db = request.result;
-      console.log('Database opened successfully');
-      resolve(db);
-    };
-    request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
-      db = (event.target as IDBOpenDBRequest).result;
-      const objectStore: IDBObjectStore = db.createObjectStore('papers', { keyPath: 'id' });
-      objectStore.createIndex('title', 'title', { unique: false });
-      objectStore.createIndex('authors', 'authors', { unique: false, multiEntry: true });
-      objectStore.createIndex('summary', 'summary', { unique: false });
-      objectStore.createIndex('published', 'published', { unique: false });
-      console.log('Database upgraded');
-    };
-  });
-};
-
 // Scan current page on arxiv
 interface PaperElement {
   id: string;
@@ -130,83 +104,68 @@ const scanPage = () => {
 			});
 		}
   }
-
+	
 	// Iterate through papers
-  papers.forEach((paper) => {
-    const titleElement = paper.titleElement;
-    if (titleElement) {
-      const defaultColor = getComputedStyle(titleElement).color; // Save default color
-      const option = document.createElement('span');
-    	option.textContent = '[save]';
-      option.style.color = 'green';
-      option.style.cursor = 'pointer';
-      option.style.marginLeft = '5px';
+	papers.forEach((paper) => {
+		const titleElement = paper.titleElement;
+		if (titleElement) {
+			const defaultColor = getComputedStyle(titleElement).color; // Save default color
+			const option = document.createElement('span');
+			option.textContent = '[save]';
+			option.style.color = 'green';
+			option.style.cursor = 'pointer';
+			option.style.marginLeft = '5px';
 
-      let isTitleSaved = false;
+			let isTitleSaved = false;
 
-			// Check if the paper exists in the database
-			const transaction: IDBTransaction = db.transaction(['papers'], 'readonly');
-			const objectStore: IDBObjectStore = transaction.objectStore('papers');
-			const request: IDBRequest = objectStore.get(paper.id);
-			request.onerror = () => {console.error('Error checking paper existence:', request.error);};
-			request.onsuccess = () => {
-				if (request.result) {
-					// Paper exists in the database
+			// Send a message to the background script to check if the paper exists in the database
+			chrome.runtime.sendMessage({ action: 'checkPaperExists', paperId: paper.id }, (response) => {
+				if (response.exists) {
 					isTitleSaved = true;
 					option.textContent = '[remove]';
+					titleElement.style.color = 'green';
 					option.style.color = 'red';
 				}
-			};
+			});
 
-      option.addEventListener('click', async () => {
-        if (isTitleSaved) { // remove from DB
-					const transaction: IDBTransaction = db.transaction(['papers'], 'readwrite');
-					const objectStore: IDBObjectStore = transaction.objectStore('papers');
-					const request: IDBRequest = objectStore.delete(paper.id);
-					request.onerror = () => {console.error('Error removing paper:', request.error);};
-					request.onsuccess = () => {
-						titleElement.style.color = defaultColor; // Restore default color
-						option.textContent = '[save]';
-						option.style.color = 'green';
-						isTitleSaved = false;
-					}
-        } 
-				else {
+			option.addEventListener('click', async () => {
+				if (isTitleSaved) {
+					// Remove from DB
+					chrome.runtime.sendMessage({ action: 'removePaper', paperId: paper.id }, (response) => {
+						if (response.success) {
+							titleElement.style.color = defaultColor;
+							option.textContent = '[save]';
+							option.style.color = 'green';
+							isTitleSaved = false;
+						} else {
+							console.error('Error removing paper:', response.error);
+						}
+					});
+				} else {
 					const paperId = paper.id;
 					const metadata = await fetchMetadata(paperId);
-					if (metadata){ // Add to DB
-						const transaction: IDBTransaction = db.transaction(['papers'], 'readwrite');
-						const objectStore: IDBObjectStore = transaction.objectStore('papers');
-						const request: IDBRequest = objectStore.put(metadata);
-						request.onsuccess = () => {
-							titleElement.style.color = 'green';
-							option.textContent = '[remove]';
-							option.style.color = 'red';
-							isTitleSaved = true;
-						}
-						request.onerror = () => {console.error('Error saving paper:', request.error);};
+					if (metadata) {
+						// Add to DB
+						chrome.runtime.sendMessage({ action: 'savePaper', paper: metadata }, (response) => {
+							if (response.success) {
+								titleElement.style.color = 'green';
+								option.textContent = '[remove]';
+								option.style.color = 'red';
+								isTitleSaved = true;
+							} else {
+								console.error('Error saving paper:', response.error);
+							}
+						});
 					}
-        }
-      });
-      titleElement.appendChild(option);
-    }
-  });
+				}
+			});
+			titleElement.appendChild(option);
+		}
+	});
 };
 
 
-// Open database and start page scan
-openDatabase()
-	.then((database: IDBDatabase) => {
-		db = database;
-		return scanPage();
-	})
-	.then(() => {
-		console.log('Page scan completed');
-	})
-	.catch((error: Error) => {
-		console.error('Error initializing database or scanning page:', error);
-	});
-
+scanPage();
 
 // Link to List of papers
 const paperTrailLink = () => {
@@ -223,9 +182,12 @@ const paperTrailLink = () => {
   hoveringDiv.style.borderRadius = '1px';
   hoveringDiv.style.zIndex = '9999';
   hoveringDiv.style.cursor = 'pointer';
+	
   const listLink = document.createElement('a');
-  listLink.href = '/'; // Adjust the URL to match the list page URL
+  listLink.href = chrome.runtime.getURL('public/paperTrail.html');
+	listLink.target = '_blank';
   listLink.appendChild(hoveringDiv);
+
   document.body.appendChild(listLink);
 };
 paperTrailLink();

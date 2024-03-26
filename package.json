@@ -28,11 +28,15 @@
     "test": "",
     "clean": "rm -rf dist",
     "compile": "npx tsc",
-    "copy-assets": "rsync -av --exclude 'tsconfig.json' --exclude 'src' --exclude 'dist' ./ dist/",
+    "copy-assets": "rsync -av --exclude 'tsconfig.json' --exclude 'src' --exclude .git --exclude 'dist' ./ dist/",
     "build": "npm run clean && npm run compile && npm run copy-assets"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.263",
+    "@types/react": "^18.2.70",
+    "@types/react-dom": "^18.2.22",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "typescript": "^5.4.3"
   }
 }

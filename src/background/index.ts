@@ -50,7 +50,7 @@ const getSavedPapers = (): Promise<Paper[]> => {
     };
     request.onsuccess = () => {
       const savedPapers: Paper[] = request.result;
-			console.log(`${request.result.length} returned.`);
+			console.log(`${request.result.length} papers returned.`);
       resolve(savedPapers);
     };
   });

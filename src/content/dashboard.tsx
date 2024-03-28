@@ -96,9 +96,14 @@ const PaperDashboard: React.FC = () => {
   return (
     <Container maxWidth="xl">
       <Box mt={4}>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#b31a1b', fontWeight: 'bold'}}>
-          PaperTrail
-        </Typography>
+				<Box display="flex" flexDirection="column" alignItems="flex-start">
+					<Typography variant="h4" component="h1" gutterBottom sx={{ color: '#b31a1b', fontWeight: 'bold' }}>
+						PaperTrail
+					</Typography>
+					<Typography variant="subtitle1" gutterBottom>
+						{papers.length} papers added.
+					</Typography>
+				</Box>
 
 				{/* Dashboard */}
         <Grid container spacing={4}>
@@ -118,7 +123,7 @@ const PaperDashboard: React.FC = () => {
                         Authors
                       </TableCell>
                       <TableCell onClick={() => handleSort('summary')} sx={{ cursor: 'pointer' }}>
-                        Summary
+                        Abstract
                       </TableCell>
                       <TableCell onClick={() => handleSort('published')} sx={{ cursor: 'pointer' }}>
                         Published
@@ -222,7 +227,7 @@ const PaperDashboard: React.FC = () => {
 								
 								{/* Summary */}
 								<Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
-									Summary:
+									Abstract:
 								</Typography>
 								<Typography variant="body1" gutterBottom>
 									{currPaperDisplayed.summary}

@@ -51,6 +51,18 @@ const PaperDashboard: React.FC = () => {
       });
   }, []);
 
+	// Format datetime when displaying dashboard
+  const formatDateTime = (dateTimeString: string) => {
+    const dateTime = new Date(dateTimeString);
+    return format(dateTime, 'MMMM d, yyyy - h:mm a');
+  };
+
+	// Display a paper when row is clicked
+  const paperDisplay = (paper: PaperData) => {
+    setCurrPaperDisplayed(paper);
+		setIsAuthorListExpanded(false);
+  };
+
   // Column sort function
   const handleSort = (column: keyof PaperData) => {
     if (sortColumn === column) {
@@ -59,17 +71,6 @@ const PaperDashboard: React.FC = () => {
       setSortColumn(column);
       setSortDirection('asc');
     }
-  };
-
-  // Format datetime when displaying dashboard
-  const formatDateTime = (dateTimeString: string) => {
-    const dateTime = new Date(dateTimeString);
-    return format(dateTime, 'MMMM d, yyyy - h:mm a');
-  };
-
-  const paperDisplay = (paper: PaperData) => {
-    setCurrPaperDisplayed(paper);
-		setIsAuthorListExpanded(false);
   };
 
   const sortedPapers = sortColumn
@@ -95,16 +96,19 @@ const PaperDashboard: React.FC = () => {
   return (
     <Container maxWidth="xl">
       <Box mt={4}>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#b31a1b' }}>
+        <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#b31a1b', fontWeight: 'bold'}}>
           PaperTrail
         </Typography>
+
+				{/* Dashboard */}
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
             {papers.length === 0 ? (
-              <Typography>No saved papers found.</Typography>
+              <Typography>No saved papers found. (Don't see your saved papers? Try reloading this page.)</Typography>
             ) : (
               <TableContainer component={Paper}>
                 <Table>
+									{/* Header */}
                   <TableHead>
                     <TableRow>
                       <TableCell onClick={() => handleSort('title')} sx={{ cursor: 'pointer' }}>
@@ -124,6 +128,8 @@ const PaperDashboard: React.FC = () => {
                       </TableCell>
                     </TableRow>
                   </TableHead>
+
+									{/* Data */}
                   <TableBody>
                     {sortedPapers.map((paper) => (
                       <TableRow
@@ -138,23 +144,28 @@ const PaperDashboard: React.FC = () => {
                         }}
                       >
                         <TableCell>
+													{/* Paper Title */}
                           <Link href={`https://arxiv.org/abs/${paper.id}`} target="_blank" rel="noopener noreferrer">
                             <Tooltip title={paper.title} placement="top-start">
                               <span>{paper.title.length > 50 ? `${paper.title.slice(0, 50)}...` : paper.title}</span>
                             </Tooltip>
                           </Link>
                         </TableCell>
+												{/* Authors */}
                         <TableCell>
                           <Tooltip title={paper.authors.join(', ')} placement="top-start">
                             <span>{paper.authors.join(', ').length > 50 ? `${paper.authors.join(', ').slice(0, 50)}...` : paper.authors.join(', ')}</span>
                           </Tooltip>
                         </TableCell>
+												{/* Summary */}
                         <TableCell>
                           <Tooltip title={paper.summary} placement="top-start">
                             <span>{paper.summary.length > 100 ? `${paper.summary.slice(0, 100)}...` : paper.summary}</span>
                           </Tooltip>
                         </TableCell>
+												{/* Date paper was published */}
                         <TableCell>{formatDateTime(paper.published)}</TableCell>
+												{/* Date paper was added */}
                         <TableCell>{formatDateTime(paper.dateAdded)}</TableCell>
                       </TableRow>
                     ))}
@@ -167,6 +178,7 @@ const PaperDashboard: React.FC = () => {
           <Grid item xs={12} md={6}>
 						{currPaperDisplayed && (
 							<Box sx={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px' }}>
+								{/* Title */}
 								<Typography variant="h5" gutterBottom>
 									<Link
 										href={`https://arxiv.org/abs/${currPaperDisplayed.id}`}
@@ -180,6 +192,7 @@ const PaperDashboard: React.FC = () => {
 
 								<Divider sx={{ marginBottom: '10px' }} />
 
+								{/* Authors */}
 								<Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
 									Authors:
 								</Typography>
@@ -199,22 +212,23 @@ const PaperDashboard: React.FC = () => {
 									</button>
 								)}
 
+								{/* Date Published */}
 								<Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
 									Published:
 								</Typography>
-
 								<Typography variant="body1" gutterBottom>
 									{formatDateTime(currPaperDisplayed.published)}
 								</Typography>
-
+								
+								{/* Summary */}
 								<Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
 									Summary:
 								</Typography>
-
 								<Typography variant="body1" gutterBottom>
 									{currPaperDisplayed.summary}
 								</Typography>
-
+								
+								{/* Links */}
 								<Link href={`https://arxiv.org/abs/${currPaperDisplayed.id}`} target="_blank" rel="noopener noreferrer">
 									View on arXiv
 								</Link>

@@ -184,7 +184,7 @@ const paperTrailLink = () => {
   hoveringDiv.style.cursor = 'pointer';
 	
   const listLink = document.createElement('a');
-  listLink.href = chrome.runtime.getURL('public/paperTrail.html');
+  listLink.href = chrome.runtime.getURL('paperTrail.html');
 	listLink.target = '_blank';
   listLink.appendChild(hoveringDiv);
 

@@ -2,22 +2,22 @@
 	"manifest_version": 3,
 	"name": "PaperTrail",
 	"description": "Save arXiv papers",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"action": {},
 	"background": {
-		"service_worker": "src/background/index.js",
+		"service_worker": "background.js",
 		"type": "module"
 	},
 	"content_scripts": [
     {
     	"matches": ["https://arxiv.org/*"],
-      "js": ["src/content/arxiv.js"],
+      "js": ["arxiv.js"],
 			"type": "module"
     }
   ],
 	"web_accessible_resources": [
     {
-      "resources": ["public/paperTrail.html"],
+      "resources": ["paperTrail.html", "paperTrail.js", "dashboard.js"],
       "matches": ["<all_urls>"]
     }
   ],

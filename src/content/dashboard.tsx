@@ -54,7 +54,8 @@ const PaperDashboard: React.FC = () => {
 	// Format datetime when displaying dashboard
   const formatDateTime = (dateTimeString: string) => {
     const dateTime = new Date(dateTimeString);
-    return format(dateTime, 'MMMM d, yyyy - h:mm a');
+    // return format(dateTime, 'MMMM d, yyyy - h:mm a');
+    return format(dateTime, 'MMMM d, yyyy');
   };
 
 	// Display a paper when row is clicked
@@ -106,16 +107,19 @@ const PaperDashboard: React.FC = () => {
 				</Box>
 
 				{/* Dashboard */}
-        <Grid container spacing={4}>
-          <Grid item xs={12} md={6}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={7}>
             {papers.length === 0 ? (
               <Typography>No saved papers found. (Don't see your saved papers? Try reloading this page.)</Typography>
             ) : (
               <TableContainer component={Paper}>
-                <Table>
+                <Table size="small">
 									{/* Header */}
                   <TableHead>
                     <TableRow>
+                      <TableCell onClick={() => handleSort('id')} sx={{ cursor: 'pointer' }}>
+                        ID
+                      </TableCell>
                       <TableCell onClick={() => handleSort('title')} sx={{ cursor: 'pointer' }}>
                         Title
                       </TableCell>
@@ -148,8 +152,10 @@ const PaperDashboard: React.FC = () => {
                           },
                         }}
                       >
+                        {/* Paper ID */}
+                        <TableCell><span>{paper.id}</span></TableCell>
+                        {/* Paper Title */}
                         <TableCell>
-													{/* Paper Title */}
                           <Link href={`https://arxiv.org/abs/${paper.id}`} target="_blank" rel="noopener noreferrer">
                             <Tooltip title={paper.title} placement="top-start">
                               <span>{paper.title.length > 50 ? `${paper.title.slice(0, 50)}...` : paper.title}</span>
@@ -179,8 +185,9 @@ const PaperDashboard: React.FC = () => {
               </TableContainer>
             )}
           </Grid>
-
-          <Grid item xs={12} md={6}>
+          
+          {/* Paper Display */}
+          <Grid item xs={12} md={5}>
 						{currPaperDisplayed && (
 							<Box sx={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px' }}>
 								{/* Title */}
@@ -196,6 +203,10 @@ const PaperDashboard: React.FC = () => {
 								</Typography>
 
 								<Divider sx={{ marginBottom: '10px' }} />
+
+                <Typography variant="body1" gutterBottom>
+                  arxiv {currPaperDisplayed.id}
+                </Typography>
 
 								{/* Authors */}
 								<Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>

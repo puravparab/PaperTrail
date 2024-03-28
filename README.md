@@ -1,8 +1,8 @@
 # PaperTrail
-A browser extension that allows you to easily save and manage research papers from [ArXiv](https://arxiv.org/). With PaperTrail, you can quickly bookmark papers, view their metadata, and keep track of your reading list.
+A browser extension that lets you easily save and manage research papers from [arXiv](https://arxiv.org/). With PaperTrail, you can quickly bookmark papers, view their metadata, and keep track of your reading list.
 
 ## Setup
-There are two ways to set up PaperTrail:\n
+There are two ways to set up PaperTrail:\
 (Use option 2 if you want to contribute)
 
 ### Option 1: Using the Release
@@ -23,14 +23,14 @@ git clone https://github.com/puravparab/PaperTrail.git
 ```
 cd PaperTrail
 ```
-3. Install the dependencies and build the extension:\n
+3. Install the dependencies and build the extension:\
 The built extension will be available in the `dist` directory.
 ```
 npm install
 npm run build
 ```
-4. Open Google Chrome and navigate to `chrome://extensions`.\n
-Enable "Developer mode" using the toggle switch in the top right corner.\n
+4. Open Google Chrome and navigate to `chrome://extensions`.\
+Enable "Developer mode" using the toggle switch in the top right corner.\
 Click on "Load unpacked" and select the `dist` directory.
 5. PaperTrail should now be installed and visible in your Chrome extensions list.
 

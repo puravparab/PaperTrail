@@ -5,6 +5,7 @@ interface PaperRes {
   authors: string[];
   summary: string;
   published: string;
+	dateAdded: string;
 }
 const fetchMetadata = async (paperId: string): Promise<PaperRes | null> => {
 	const url = `https://export.arxiv.org/api/query?id_list=${paperId}`;
@@ -21,12 +22,14 @@ const fetchMetadata = async (paperId: string): Promise<PaperRes | null> => {
 			);
 			const summary = entry.querySelector('summary')?.textContent || '';
 			const published = entry.querySelector('published')?.textContent || '';
+			const dateAdded = new Date().toISOString(); // Get the current date and time as an ISO string
 			const paperRes: PaperRes = {
 				id: paperId,
 				title,
 				authors,
 				summary,
 				published,
+				dateAdded
 			};
 			return paperRes;
 		}

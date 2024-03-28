@@ -1,82 +1,3 @@
-// 'use client';
-
-// import React, { useState, useEffect } from 'react';
-// import { Container, Typography, Box, Grid, Paper, Link } from '@mui/material';
-
-// interface PaperData {
-// 	id: string;
-// 	title: string;
-// 	authors: string[];
-// 	summary: string;
-// 	published: string;
-// }
-
-// const PaperDashboard: React.FC = () => {
-// 	const [papers, setPapers] = useState<PaperData[]>([]);
-
-// 	useEffect(() => {
-// 		// Retrieve saved papers from the background script
-// 		const getSavedPapersFromBackground = () => {
-// 			return new Promise<PaperData[]>((resolve, reject) => {
-// 				chrome.runtime.sendMessage({ action: 'getSavedPapers' }, (response) => {
-// 					if (chrome.runtime.lastError) {
-// 						reject(chrome.runtime.lastError);
-// 					} else if (response.error) {
-// 						reject(new Error(response.error));
-// 					} else {
-// 						resolve(response.papers);
-// 					}
-// 				});
-// 			});
-// 		};
-
-// 		// Fetch saved papers and update the state
-// 		getSavedPapersFromBackground()
-// 			.then((savedPapers) => {
-// 				setPapers(savedPapers);
-// 			})
-// 			.catch((error) => {
-// 				console.error('Error retrieving saved papers:', error);
-// 			});
-// 	}, []);
-
-// 	return (
-// 		<Container maxWidth="md">
-// 			<Box mt={4}>
-// 				<Typography variant="h4" component="h1" gutterBottom>
-// 					PaperTrail
-// 				</Typography>
-// 				{papers.length === 0 ? (
-// 					<Typography>No saved papers found.</Typography>
-// 				) : (
-// 					<Grid container spacing={2}>
-// 						{papers.map((paper) => (
-// 							<Grid item xs={12} key={paper.id}>
-// 								<Paper elevation={2} sx={{ p: 2 }}>
-// 									<Typography variant="h6" component="h2" gutterBottom>
-// 										<Link href={`https://arxiv.org/abs/${paper.id}`} target="_blank" rel="noopener noreferrer">
-// 											{paper.title}
-// 										</Link>
-// 									</Typography>
-// 									<Typography color="textSecondary" gutterBottom>
-// 										{paper.authors.join(', ')}
-// 									</Typography>
-// 									<Typography variant="body1">{paper.summary}</Typography>
-// 									<Typography variant="body2" color="textSecondary">
-// 										Published: {paper.published}
-// 									</Typography>
-// 								</Paper>
-// 							</Grid>
-// 						))}
-// 					</Grid>
-// 				)}
-// 			</Box>
-// 		</Container>
-// 	);
-// };
-
-// export default PaperDashboard;
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -85,9 +6,10 @@ import { Container, Typography, Box, TableContainer, Paper, Table, TableHead, Ta
 interface PaperData {
   id: string;
   title: string;
-  authors: string[];
+  authors: string[]; 
   summary: string;
   published: string;
+	dateAdded: string;
 }
 
 const PaperDashboard: React.FC = () => {
@@ -134,10 +56,19 @@ const PaperDashboard: React.FC = () => {
     ? [...papers].sort((a, b) => {
         const aValue = a[sortColumn];
         const bValue = b[sortColumn];
+				if (aValue === null) return sortDirection === 'asc' ? 1 : -1;
+        if (bValue === null) return sortDirection === 'asc' ? -1 : 1;
 
-        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
-        return 0;
+        if (sortColumn === 'dateAdded') {
+          const aDate = new Date(aValue as string);
+          const bDate = new Date(bValue as string);
+          return sortDirection === 'asc' ? aDate.getTime() - bDate.getTime() : bDate.getTime() - aDate.getTime();
+        } else {
+          if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+          if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+          return 0;
+				}
+				return 0;
       })
     : papers;
 
@@ -154,17 +85,20 @@ const PaperDashboard: React.FC = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell onClick={() => handleSort('title')} sx={{ cursor: 'pointer' }}>
+                  <TableCell onClick={() => handleSort('title')} sx={{ cursor: 'pointer'}}>
                     Title
                   </TableCell>
-                  <TableCell onClick={() => handleSort('authors')} sx={{ cursor: 'pointer' }}>
+                  <TableCell onClick={() => handleSort('authors')} sx={{ cursor: 'pointer'}}>
                     Authors
                   </TableCell>
-                  <TableCell onClick={() => handleSort('summary')} sx={{ cursor: 'pointer' }}>
+                  <TableCell onClick={() => handleSort('summary')} sx={{ cursor: 'pointer'}}>
                     Summary
                   </TableCell>
-                  <TableCell onClick={() => handleSort('published')} sx={{ cursor: 'pointer' }}>
+                  <TableCell onClick={() => handleSort('published')} sx={{ cursor: 'pointer'}}>
                     Published
+                  </TableCell>
+									<TableCell onClick={() => handleSort('dateAdded')} sx={{ cursor: 'pointer'}}>
+                    Date Added
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -198,6 +132,7 @@ const PaperDashboard: React.FC = () => {
                       </Tooltip>
                     </TableCell>
                     <TableCell>{paper.published}</TableCell>
+										<TableCell>{paper.dateAdded}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

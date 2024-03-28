@@ -6,6 +6,7 @@ interface Paper {
   authors: string[];
   summary: string;
   published: string;
+  dateAdded: string;
 }
 
 let db: IDBDatabase;
@@ -30,6 +31,7 @@ const openDatabase = (): Promise<IDBDatabase> => {
 				objectStore.createIndex('authors', 'authors', { unique: false, multiEntry: true });
 				objectStore.createIndex('summary', 'summary', { unique: false });
 				objectStore.createIndex('published', 'published', { unique: false });
+        objectStore.createIndex('dateAdded', 'dateAdded', { unique: false });
 			}
 			console.log('Database upgraded');
 		};

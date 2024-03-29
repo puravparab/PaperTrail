@@ -59,7 +59,7 @@ const PaperDashboard: React.FC = () => {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'papertrail_data.csv');
+    link.setAttribute('download', 'PaperTrail_data.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -72,7 +72,7 @@ const PaperDashboard: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'papertrail_data.json';
+    link.download = 'PaperTrail_data.json';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -126,21 +126,32 @@ const PaperDashboard: React.FC = () => {
       <Box mt={4}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Box display="flex" flexDirection="column" alignItems="flex-start">
-            <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#b31a1b', fontWeight: 'bold' }}>
-              PaperTrail
-            </Typography>
+            <Link
+              href="https://github.com/puravparab/PaperTrail"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ textDecoration: 'none' }}
+            >
+              <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#b31a1b', fontWeight: 'bold' }}>
+                PaperTrail
+              </Typography>
+            </Link>
             <Typography variant="subtitle1" gutterBottom>
               {papers.length} papers added.
             </Typography>
           </Box>
-          <Box>
-            <Button variant="outlined" color="primary" onClick={handleDownloadCSV} sx={{ marginRight: '10px' }}>
-              CSV
-            </Button>
-            <Button variant="outlined" color="primary" onClick={handleDownloadJSON}>
-              JSON
-            </Button>
-          </Box>
+
+          {/* Data download links */}
+          {papers.length === 0 ? (<></>)
+            : (
+            <Box>
+              <Button variant="outlined" color="primary" onClick={handleDownloadCSV} sx={{ marginRight: '10px' }}>
+                CSV
+              </Button>
+              <Button variant="outlined" color="primary" onClick={handleDownloadJSON}>
+                JSON
+              </Button>
+            </Box>)}
         </Box>
 
 				{/* Dashboard */}
@@ -312,7 +323,7 @@ const PaperDashboard: React.FC = () => {
                       },
                     }}
                   >
-                    <button>View LaTeX</button>
+                    <button>LaTeX source</button>
                   </Link>
                 </Box>
 
@@ -352,14 +363,19 @@ const PaperDashboard: React.FC = () => {
 									{currPaperDisplayed.summary}
 								</Typography>
 								
-								{/* Links */}
-								<Link href={`https://arxiv.org/abs/${currPaperDisplayed.id}`} target="_blank" rel="noopener noreferrer">
-									View on arXiv
-								</Link>
 							</Box>
 						)}
           </Grid>
         </Grid>
+      </Box>
+
+      {/* Issues Link */}
+      <Box mt={4} display="flex" justifyContent="center">
+        <Link href="https://github.com/puravparab/PaperTrail/issues" target="_blank" rel="noopener noreferrer">
+          <Typography variant="body2" color="textSecondary">
+            Report an issue or suggest an improvement on GitHub
+          </Typography>
+        </Link>
       </Box>
     </Container>
   );

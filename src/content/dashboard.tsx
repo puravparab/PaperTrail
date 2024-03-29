@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Link, Tooltip, Grid, Divider } from '@mui/material';
+import { Container, Typography, Box, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Link, Tooltip, Grid, Divider, Button } from '@mui/material';
 import { format } from 'date-fns';
 
 interface PaperData {
@@ -51,6 +51,33 @@ const PaperDashboard: React.FC = () => {
       });
   }, []);
 
+  // Download paper to csv file
+  const handleDownloadCSV = () => {
+    const csvContent = "data:text/csv;charset=utf-8," + 'arxiv_id,title,authors,date_published,date_added\n' + papers.map(paper => 
+      `${paper.id},${paper.title},${paper.authors.join(';')},${paper.published},${paper.dateAdded}`
+    ).join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'papertrail_data.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Download paper to json
+  const handleDownloadJSON = () => {
+    const jsonContent = JSON.stringify(papers, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'papertrail_data.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 	// Format datetime when displaying dashboard
   const formatDateTime = (dateTimeString: string) => {
     const dateTime = new Date(dateTimeString);
@@ -97,14 +124,24 @@ const PaperDashboard: React.FC = () => {
   return (
     <Container maxWidth="xl">
       <Box mt={4}>
-				<Box display="flex" flexDirection="column" alignItems="flex-start">
-					<Typography variant="h4" component="h1" gutterBottom sx={{ color: '#b31a1b', fontWeight: 'bold' }}>
-						PaperTrail
-					</Typography>
-					<Typography variant="subtitle1" gutterBottom>
-						{papers.length} papers added.
-					</Typography>
-				</Box>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box display="flex" flexDirection="column" alignItems="flex-start">
+            <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#b31a1b', fontWeight: 'bold' }}>
+              PaperTrail
+            </Typography>
+            <Typography variant="subtitle1" gutterBottom>
+              {papers.length} papers added.
+            </Typography>
+          </Box>
+          <Box>
+            <Button variant="outlined" color="primary" onClick={handleDownloadCSV} sx={{ marginRight: '10px' }}>
+              CSV
+            </Button>
+            <Button variant="outlined" color="primary" onClick={handleDownloadJSON}>
+              JSON
+            </Button>
+          </Box>
+        </Box>
 
 				{/* Dashboard */}
         <Grid container spacing={3}>

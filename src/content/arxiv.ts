@@ -176,7 +176,7 @@ const paperTrailLink = () => {
   hoveringDiv.textContent = 'PaperTrail';
   hoveringDiv.style.position = 'fixed';
   hoveringDiv.style.top = '0px';
-  hoveringDiv.style.left = '300px';
+  hoveringDiv.style.left = '250px';
   hoveringDiv.style.backgroundColor = '#f2f0e8';
   hoveringDiv.style.color = '#b31a1b';
 	hoveringDiv.style.fontSize = '20px'; 

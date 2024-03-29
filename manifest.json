@@ -2,7 +2,7 @@
 	"manifest_version": 3,
 	"name": "PaperTrail",
 	"description": "Save arXiv papers",
-	"version": "0.5.0",
+	"version": "0.6.0",
 	"action": {},
 	"background": {
 		"service_worker": "background.js",
@@ -10,7 +10,7 @@
 	},
 	"content_scripts": [
     {
-    	"matches": ["https://arxiv.org/*"],
+    	"matches": ["https://arxiv.org/*", "https://browse.arxiv.org/*", "https://ar5iv.labs.arxiv.org/*", "https://export.arxiv.org/*"],
       "js": ["arxiv.js"],
 			"type": "module"
     }

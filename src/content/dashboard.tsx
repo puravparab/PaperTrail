@@ -191,22 +191,93 @@ const PaperDashboard: React.FC = () => {
 						{currPaperDisplayed && (
 							<Box sx={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px' }}>
 								{/* Title */}
-								<Typography variant="h5" gutterBottom>
-									<Link
-										href={`https://arxiv.org/abs/${currPaperDisplayed.id}`}
-										target="_blank"
-										rel="noopener noreferrer"
-										sx={{ color: '#b31a1b', fontWeight: 'bold', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
-									>
-										{currPaperDisplayed.title}
-									</Link>
-								</Typography>
+                <Typography variant="h5" gutterBottom>
+                  <Link
+                    href={`https://arxiv.org/abs/${currPaperDisplayed.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{ color: '#b31a1b', fontWeight: 'bold', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+                  >
+                    {currPaperDisplayed.title}
+                  </Link>
+                </Typography>
 
 								<Divider sx={{ marginBottom: '10px' }} />
 
-                <Typography variant="body1" gutterBottom>
-                  arxiv {currPaperDisplayed.id}
-                </Typography>
+                {/* HTML, PDF Buttons */}
+                <Box display="flex" alignItems="center" marginBottom="10px">
+                  <Link
+                    href={`https://ar5iv.labs.arxiv.org/html/${currPaperDisplayed.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      textDecoration: 'none',
+                      marginRight: '10px',
+                      '& button': {
+                        padding: '5px 10px',
+                        border: 'none',
+                        borderRadius: '4px',
+                        background: '#1976d2',
+                        color: 'white',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        transition: 'background-color 0.3s',
+                        '&:hover': {
+                          backgroundColor: '#1565c0',
+                        },
+                      },
+                    }}
+                  >
+                    <button>View HTML</button>
+                  </Link>
+                  <Link
+                    href={`https://arxiv.org/pdf/${currPaperDisplayed.id}.pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      textDecoration: 'none',
+                      marginRight: '10px',
+                      '& button': {
+                        padding: '5px 10px',
+                        border: 'none',
+                        borderRadius: '4px',
+                        background: '#1976d2',
+                        color: 'white',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        transition: 'background-color 0.3s',
+                        '&:hover': {
+                          backgroundColor: '#1565c0',
+                        },
+                      },
+                    }}
+                  >
+                    <button>View PDF</button>
+                  </Link>
+                  <Link
+                    href={`https://arxiv.org/src/${currPaperDisplayed.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      textDecoration: 'none',
+                      '& button': {
+                        padding: '5px 10px',
+                        border: 'none',
+                        borderRadius: '4px',
+                        background: '#1976d2',
+                        color: 'white',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        transition: 'background-color 0.3s',
+                        '&:hover': {
+                          backgroundColor: '#1565c0',
+                        },
+                      },
+                    }}
+                  >
+                    <button>View LaTeX</button>
+                  </Link>
+                </Box>
 
 								{/* Authors */}
 								<Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>

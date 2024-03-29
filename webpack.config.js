@@ -13,6 +13,7 @@ export default {
     arxiv: './src/content/arxiv.ts',
     paperTrail: './src/content/paperTrail.tsx',
     dashboard: './src/content/dashboard.tsx',
+    popup: './src/content/popup.ts'
   },
   output: {
     path: path.resolve(__dirname, 'dist'),

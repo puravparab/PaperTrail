@@ -1,6 +1,8 @@
 # PaperTrail
 A browser extension that lets you easily save and manage research papers from [arXiv](https://arxiv.org/). With PaperTrail, you can quickly bookmark papers, view their metadata, and keep track of your reading list.
 
+![PaperTrail](assets/PaperTrail.png)
+
 ## Setup
 There are two ways to set up PaperTrail:\
 (Use option 2 if you want to contribute)

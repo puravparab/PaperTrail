@@ -113,11 +113,24 @@ const scanPage = () => {
 		const titleElement = paper.titleElement;
 		if (titleElement) {
 			const defaultColor = getComputedStyle(titleElement).color; // Save default color
-			const option = document.createElement('span');
-			option.textContent = '[save]';
-			option.style.color = 'green';
-			option.style.cursor = 'pointer';
-			option.style.marginLeft = '5px';
+
+			// Create a container for the buttons
+			const buttonContainer = document.createElement('div');
+			buttonContainer.style.display = 'inline-flex';
+			buttonContainer.style.alignItems = 'center';
+			buttonContainer.style.marginLeft = '10px';
+
+			// Create the save/remove button
+			const saveBtn = document.createElement('button');
+			saveBtn.textContent = 'Save';
+			saveBtn.style.marginRight = '10px';
+			saveBtn.style.padding = '4px 10px';
+			saveBtn.style.backgroundColor = 'green';
+			saveBtn.style.fontSize = '17px';
+			saveBtn.style.color = 'white';
+			saveBtn.style.border = 'none';
+			saveBtn.style.borderRadius = '4px';
+			saveBtn.style.cursor = 'pointer';
 
 			let isTitleSaved = false;
 
@@ -125,20 +138,20 @@ const scanPage = () => {
 			chrome.runtime.sendMessage({ action: 'checkPaperExists', paperId: paper.id }, (response) => {
 				if (response.exists) {
 					isTitleSaved = true;
-					option.textContent = '[remove]';
+					saveBtn.textContent = 'Remove';
+					saveBtn.style.backgroundColor = 'red';
 					titleElement.style.color = 'green';
-					option.style.color = 'red';
 				}
 			});
 
-			option.addEventListener('click', async () => {
+			saveBtn.addEventListener('click', async () => {
 				if (isTitleSaved) {
 					// Remove from DB
 					chrome.runtime.sendMessage({ action: 'removePaper', paperId: paper.id }, (response) => {
 						if (response.success) {
 							titleElement.style.color = defaultColor;
-							option.textContent = '[save]';
-							option.style.color = 'green';
+							saveBtn.textContent = 'Save';
+							saveBtn.style.backgroundColor = 'green';
 							isTitleSaved = false;
 						} else {
 							console.error('Error removing paper:', response.error);
@@ -152,8 +165,8 @@ const scanPage = () => {
 						chrome.runtime.sendMessage({ action: 'savePaper', paper: metadata }, (response) => {
 							if (response.success) {
 								titleElement.style.color = 'green';
-								option.textContent = '[remove]';
-								option.style.color = 'red';
+								saveBtn.textContent = 'Remove';
+								saveBtn.style.backgroundColor = 'red';
 								isTitleSaved = true;
 							} else {
 								console.error('Error saving paper:', response.error);
@@ -162,11 +175,43 @@ const scanPage = () => {
 					}
 				}
 			});
-			titleElement.appendChild(option);
+			buttonContainer.appendChild(saveBtn);
+
+			// Create the "HTML" button
+      const viewHtmlBtn = document.createElement('button');
+      viewHtmlBtn.textContent = 'HTML';
+      viewHtmlBtn.style.marginRight = '10px';
+      viewHtmlBtn.style.padding = '4px 10px';
+      viewHtmlBtn.style.backgroundColor = '#1976d2';
+			viewHtmlBtn.style.fontSize = '17px';
+      viewHtmlBtn.style.color = 'white';
+      viewHtmlBtn.style.border = 'none';
+      viewHtmlBtn.style.borderRadius = '4px';
+      viewHtmlBtn.style.cursor = 'pointer';
+      viewHtmlBtn.addEventListener('click', () => {
+        window.open(`https://ar5iv.labs.arxiv.org/html/${paper.id}`, '_blank');
+      });
+			buttonContainer.appendChild(viewHtmlBtn);
+
+			// Create the "PDF" button
+      const viewPdfBtn = document.createElement('button');
+      viewPdfBtn.textContent = 'PDF';
+      viewPdfBtn.style.padding = '4px 10px';
+      viewPdfBtn.style.backgroundColor = '#1976d2';
+			viewPdfBtn.style.fontSize = '17px';
+      viewPdfBtn.style.color = 'white';
+      viewPdfBtn.style.border = 'none';
+      viewPdfBtn.style.borderRadius = '4px';
+      viewPdfBtn.style.cursor = 'pointer';
+      viewPdfBtn.addEventListener('click', () => {
+        window.open(`https://arxiv.org/pdf/${paper.id}.pdf`, '_blank');
+      });
+      buttonContainer.appendChild(viewPdfBtn);
+
+			titleElement.appendChild(buttonContainer);
 		}
 	});
 };
-
 
 scanPage();
 

@@ -16,12 +16,27 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      margin-bottom: 20px;
+    }
+    .links {
+      display: flex;
+      flex-direction: rows;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    a {
+      color: #1976d2;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
   <button id="openPaperTrail">Open PaperTrail</button>
-
+  <div class="links">
+    <a href="https://github.com/puravparab/PaperTrail" target="_blank">GitHub</a>
+    <a href="https://github.com/puravparab/PaperTrail/issues" target="_blank">Issues</a>
+  </div>
   <script src="popup.js"></script>
 </body>
 </html>

@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Link, Tooltip, Grid, Divider, Button } from '@mui/material';
+import { 
+  Container, Typography, Box, TableContainer, Paper, 
+  Table, TableHead, TableRow, TableCell, TableBody, 
+  Link, Tooltip, Grid, Divider, Button
+} from '@mui/material';
 import { format } from 'date-fns';
 
 interface PaperData {
@@ -15,8 +19,8 @@ const PaperDashboard: React.FC = () => {
   const [papers, setPapers] = useState<PaperData[]>([]);
 
 	// Dashboard
-  const [sortColumn, setSortColumn] = useState<keyof PaperData | null>(null);
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [sortColumn, setSortColumn] = useState<keyof PaperData | null>('dateAdded');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
 	// Paper Display
 	const [currPaperDisplayed, setCurrPaperDisplayed] = useState<PaperData | null>(null);

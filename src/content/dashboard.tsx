@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Container, Typography, Box, TableContainer, Paper, 
   Table, TableHead, TableRow, TableCell, TableBody, 
-  Link, Tooltip, Grid, Divider, Button
+  Link, Tooltip, Grid, Divider, Button, TextField
 } from '@mui/material';
 import { format } from 'date-fns';
 
@@ -16,32 +16,24 @@ interface PaperData {
 }
 
 const PaperDashboard: React.FC = () => {
+  // List of retrieved papers
   const [papers, setPapers] = useState<PaperData[]>([]);
 
-	// Dashboard
+	// Dashboard sorting
   const [sortColumn, setSortColumn] = useState<keyof PaperData | null>('dateAdded');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-	// Paper Display
+	// Paper display
 	const [currPaperDisplayed, setCurrPaperDisplayed] = useState<PaperData | null>(null);
 	const [isAuthorListExpanded, setIsAuthorListExpanded] = useState(false);
 
-  useEffect(() => {
-    // Retrieve saved papers from the background script
-    const getSavedPapersFromBackground = () => {
-      return new Promise<PaperData[]>((resolve, reject) => {
-        chrome.runtime.sendMessage({ action: 'getSavedPapers' }, (response) => {
-        	if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError);
-          } else if (response.error) {
-            reject(new Error(response.error));
-          } else {
-            resolve(response.papers);
-          }
-        });
-      });
-    };
+  // Search
+  const [searchQuery, setSearchQuery] = useState('');
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
 
+  useEffect(() => {
     // Fetch saved papers and update the state
     getSavedPapersFromBackground()
       .then((savedPapers) => {
@@ -54,6 +46,21 @@ const PaperDashboard: React.FC = () => {
         console.error('Error retrieving saved papers:', error);
       });
   }, []);
+
+  // Retrieve saved papers from the background script
+  const getSavedPapersFromBackground = () => {
+    return new Promise<PaperData[]>((resolve, reject) => {
+      chrome.runtime.sendMessage({ action: 'getSavedPapers' }, (response) => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else if (response.error) {
+          reject(new Error(response.error));
+        } else {
+          resolve(response.papers);
+        }
+      });
+    });
+  };
 
   // Download paper to csv file
   const handleDownloadCSV = () => {
@@ -104,9 +111,18 @@ const PaperDashboard: React.FC = () => {
       setSortDirection('asc');
     }
   };
+  
+  // Filters papers based on searchQuery
+  const filteredPapers = papers.filter((paper) =>
+    paper.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    paper.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    paper.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    paper.authors.some((author) => author.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
+  // Sorting logic for the dashboard
   const sortedPapers = sortColumn
-    ? [...papers].sort((a, b) => {
+    ? [...filteredPapers].sort((a, b) => {
         const aValue = a[sortColumn];
         const bValue = b[sortColumn];
         if (aValue === null) return sortDirection === 'asc' ? 1 : -1;
@@ -123,7 +139,7 @@ const PaperDashboard: React.FC = () => {
         }
         return 0;
       })
-    : papers;
+    : filteredPapers;
 
   return (
     <Container maxWidth="xl">
@@ -141,29 +157,44 @@ const PaperDashboard: React.FC = () => {
               </Typography>
             </Link>
             <Typography variant="subtitle1" gutterBottom>
-              {papers.length} papers added.
+              {filteredPapers.length} papers added.
             </Typography>
           </Box>
 
           {/* Data download links */}
-          {papers.length === 0 ? (<></>)
-            : (
-            <Box>
-              <Button variant="outlined" color="primary" onClick={handleDownloadCSV} sx={{ marginRight: '10px' }}>
-                CSV
-              </Button>
-              <Button variant="outlined" color="primary" onClick={handleDownloadJSON}>
-                JSON
-              </Button>
-            </Box>)}
+          {papers.length === 0 
+            ? (<></>)
+            : (<>
+                {/* Search bar */}
+                <Box display="flex" justifyContent="center" mt={2}>
+                  <TextField
+                    placeholder=""
+                    variant="outlined"
+                    size="small"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    sx={{ width: '400px' }}
+                    label="Search papers..."
+                  />
+                </Box>
+                <Box>
+                  <Button variant="outlined" color="primary" onClick={handleDownloadCSV} sx={{ marginRight: '10px' }}>
+                    CSV
+                  </Button>
+                  <Button variant="outlined" color="primary" onClick={handleDownloadJSON}>
+                    JSON
+                  </Button>
+                </Box>
+              </>)
+          }
         </Box>
 
 				{/* Dashboard */}
         <Grid container spacing={3}>
           <Grid item xs={12} md={7}>
-            {papers.length === 0 ? (
-              <Typography>No saved papers found. (Don't see your saved papers? Try reloading this page.)</Typography>
-            ) : (
+            {filteredPapers.length === 0 
+            ? (<Typography>No saved papers found. (Don't see your saved papers? Try reloading this page.)</Typography>)
+            : (
               <TableContainer component={Paper}>
                 <Table size="small">
 									{/* Header */}

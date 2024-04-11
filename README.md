@@ -36,6 +36,12 @@ Enable "Developer mode" using the toggle switch in the top right corner.\
 Click on "Load unpacked" and select the `dist` directory.
 5. PaperTrail should now be installed and visible in your Chrome extensions list.
 
+## Updating to a newer release?
+Download and extract the dist.zip file in the same location as the older version. This is done so that you don't lose your saved papers. 
+
+## Save your papers locally
+Go to the PaperTrail Dashboard and get your saved paper data as a .csv or .json file.
+
 ## Common Issues
 1. You will need npm to build this extension
 2. If you have saved papers and get a "No saved papers found", try reloading the page. 

@@ -4,9 +4,11 @@ A browser extension that lets you easily save and manage research papers from [a
 ![PaperTrail](assets/PaperTrail.png)
 
 ## Features
--- Bookmark and search through arxiv papers
--- Quick links to pdf and html versions
--- Download data to a json or csv file
+- Bookmark and search through arxiv papers
+
+- Quick links to pdf and html versions
+
+- Download data to a json or csv file
 
 ## Setup
 There are two ways to set up PaperTrail:\
